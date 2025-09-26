@@ -31,10 +31,18 @@ jobs:
           neovim: true
           version: v0.11.4
 
-      # Runs a single command using the runners shell
+      # Trigger Lazy vim to install plugins in data folder
       - name: Run a one-line script
         run: ./Pack.sh
 
-      # Runs a set of commands using the runners shell
-      - name: Check
-        run: ls
+      # Delete unnecessary data and Zip files
+      - name: Prepare release
+        run: |
+            rm -rf data/cache data/config data/state
+            tar -czf release.tar.gz config data
+      
+      - name: Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-archive
+          path: release.tar.gz
